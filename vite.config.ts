@@ -9,7 +9,7 @@ export default defineConfig(() => ({
     port: 8080,
   },
   plugins: [react()].filter(Boolean),
-  base: "lv-24h-festas-bebidas",
+  base: "/lv-24h-festas-bebidas/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

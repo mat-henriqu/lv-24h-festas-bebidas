@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://mat-henriqu.github.io/lv-24h-festas-bebidas",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,9 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -F",
-    "homepage": "https://mat-henriqu.github.io/lv-24h-festas-bebidas",
-    "name": "lv-24h-festas-bebidas"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

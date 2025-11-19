@@ -8,7 +8,11 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist -F",
+    "homepage": "https://mat-henriqu.github.io/lv-24h-festas-bebidas",
+    "name": "lv-24h-festas-bebidas"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

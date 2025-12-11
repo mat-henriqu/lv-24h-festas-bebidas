@@ -18,6 +18,9 @@ import AdminOrders from "./pages/AdminOrders";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminCoupons from "./pages/AdminCoupons";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailure from "./pages/PaymentFailure";
+import PaymentPending from "./pages/PaymentPending";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +63,23 @@ const App = () => (
               <Route path="/meus-pedidos" element={
                 <ProtectedRoute>
                   <MyOrders />
+                </ProtectedRoute>
+              } />
+              
+              {/* Rotas de Pagamento */}
+              <Route path="/pagamento/sucesso" element={
+                <ProtectedRoute>
+                  <PaymentSuccess />
+                </ProtectedRoute>
+              } />
+              <Route path="/pagamento/falha" element={
+                <ProtectedRoute>
+                  <PaymentFailure />
+                </ProtectedRoute>
+              } />
+              <Route path="/pagamento/pendente" element={
+                <ProtectedRoute>
+                  <PaymentPending />
                 </ProtectedRoute>
               } />
               

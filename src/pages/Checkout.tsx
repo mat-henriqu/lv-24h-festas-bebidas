@@ -36,9 +36,6 @@ const Checkout = () => {
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
   
-  // Estado para Mercado Pago
-  const [processingPayment, setProcessingPayment] = useState(false);
-  
   // Cálculo do subtotal, desconto e total final
   const subtotal = total;
   const discount = appliedCoupon 
@@ -179,7 +176,7 @@ const Checkout = () => {
         subtotal,
         discount,
         couponCode: appliedCoupon?.code || null,
-        status: 'pending.paid', // Sempre aguarda pagamento inicialmente
+        status: paymentMethod === 'pix' ? 'pending.paid' : 'paid', // PIX aguarda pagamento
         paymentMethod,
         voucherCode,
         createdAt: Timestamp.now(),
@@ -201,56 +198,10 @@ const Checkout = () => {
         orders: arrayUnion(orderRef.id)
       });
 
-      // Se o método de pagamento for Mercado Pago (PIX ou Cartão online)
-      if (paymentMethod === 'pix') {
-        setProcessingPayment(true);
-        
-        try {
-          // Chamar API para criar preferência de pagamento
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-          const response = await fetch(`${apiUrl}/api/create-preference`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              items: items.map(item => ({
-                name: item.product.name,
-                quantity: item.quantity,
-                price: item.product.price
-              })),
-              orderId: orderRef.id,
-              customerEmail: customer.email || user.email,
-              customerName: customer.name,
-              customerPhone: customer.phone
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Erro ao criar preferência de pagamento');
-          }
-
-          const data = await response.json();
-          
-          // Limpar carrinho antes de redirecionar
-          clearCart();
-          
-          // Redirecionar para o Mercado Pago
-          // Em produção, usar init_point; em teste, usar sandbox_init_point
-          window.location.href = data.sandbox_init_point || data.init_point;
-          
-          return;
-        } catch (error) {
-          console.error('Erro no Mercado Pago:', error);
-          toast.error('Erro ao processar pagamento. Tente novamente.');
-          setProcessingPayment(false);
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Para pagamento em dinheiro ou cartão na retirada
+      // Limpar carrinho
       clearCart();
+      
+      // Redirecionar para página do voucher
       toast.success("Pedido realizado com sucesso!");
       navigate(`/pedido/${orderRef.id}`);
       
@@ -258,9 +209,7 @@ const Checkout = () => {
       console.error("Erro ao criar pedido:", error);
       toast.error("Erro ao processar pedido. Tente novamente.");
     } finally {
-      if (!processingPayment) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
 
@@ -465,22 +414,10 @@ const Checkout = () => {
           <Button 
             type="submit" 
             className="w-full py-6 text-lg bg-gradient-to-r from-primary to-secondary"
-            disabled={loading || processingPayment}
+            disabled={loading}
           >
-            {processingPayment 
-              ? "Redirecionando para pagamento..." 
-              : loading 
-              ? "Processando..." 
-              : paymentMethod === 'pix' 
-              ? "Pagar com PIX" 
-              : "Confirmar Pedido"}
+            {loading ? "Processando..." : "Confirmar Pedido"}
           </Button>
-          
-          {paymentMethod === 'pix' && (
-            <p className="text-sm text-muted-foreground text-center">
-              Você será redirecionado para o Mercado Pago para concluir o pagamento
-            </p>
-          )}
         </form>
       </div>
     </div>
